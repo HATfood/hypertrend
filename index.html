@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7faf8">
+  <title>داشبورد فروش هایپرفامیلی ۱۴۰۵</title>
+  <meta name="description" content="داشبورد کنترل‌شده فروش وزنی برندهای شرکت و سایر برندها در هایپرفامیلی">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="overrides.css">
+  <script src="data.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body class="locked">
+  <div class="login-gate" id="login-gate" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <form class="login-card" id="login-form">
+      <span class="login-mark">HF</span>
+      <p class="login-kicker">گزارش داخلی فروش</p>
+      <h1 id="login-title">داشبورد فروش هایپرفامیلی</h1>
+      <p>برای مشاهده داده‌های کنترل‌شده، رمز ورود را وارد کنید.</p>
+      <label for="login-password">رمز ورود</label>
+      <div class="password-row"><input id="login-password" type="password" required autofocus placeholder="رمز را وارد کنید"><button type="submit">ورود</button></div>
+      <span class="login-error" id="login-error" aria-live="polite"></span>
+    </form>
+  </div>
+
+  <main id="dashboard" aria-hidden="true">
+    <header class="topbar">
+      <a class="brand" href="#top"><span class="brand-mark">HF</span><span><b>هایپرفامیلی</b><small>داشبورد فروش برندهای شرکت</small></span></a>
+      <span class="verified"><i>✓</i> داده کنترل‌شده تا پایان مرداد ۱۴۰۵</span>
+    </header>
+
+    <section class="hero" id="top">
+      <div><span class="eyebrow">گزارش وزنی پنج‌ماهه</span><h1>عملکرد فروش در <em>هایپرفامیلی</em></h1><p>مقایسه برندهای فامیلا، بلوط، سانتین و کیمبال با سایر برندهای هر گروه محصولی</p></div>
+      <div class="hero-total"><small>فروش برندهای هستی آرین</small><strong id="hero-total">۰</strong><span>تن</span></div>
+    </section>
+
+    <section class="filter-bar">
+      <div class="filter-intro"><span>⌁</span><div><b>نمای گزارش</b><small id="filter-description">همه برندهای شرکت · پنج‌ماهه</small></div></div>
+      <label>برند شرکت<select id="brand-filter"><option value="all">همه برندهای شرکت</option><option>فامیلا</option><option>بلوط</option><option>سانتین</option><option>کیمبال</option></select></label>
+      <label>ماه<select id="month-filter"><option value="all">فروردین تا مرداد</option><option value="0">فروردین</option><option value="1">اردیبهشت</option><option value="2">خرداد</option><option value="3">تیر</option><option value="4">مرداد</option></select></label>
+      <button id="reset-filter">پاک‌کردن فیلترها</button>
+    </section>
+
+    <nav class="tabs" id="category-tabs" aria-label="انتخاب گروه محصولی"></nav>
+    <section class="kpis" id="kpis"></section>
+
+    <section class="dashboard-grid">
+      <article class="panel trend-panel" id="trend-panel"></article>
+      <article class="panel share-panel" id="share-panel"></article>
+    </section>
+    <section class="panel compare-panel" id="compare-panel"></section>
+    <section class="insights" id="insights"></section>
+    <section class="panel table-panel" id="table-panel"></section>
+
+    <footer><span>منبع: فایل‌های وزنی فروش خالص پس از برگشتی هایپرفامیلی</span><span>مبنای محاسبات: کیلوگرم · نمایش نمودار: تن</span></footer>
+  </main>
+</body>
+</html>
