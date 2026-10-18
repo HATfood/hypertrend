@@ -1,5 +1,8 @@
 const DATA=window.HYPERFAMILY_DATA;
 const months=DATA.months;
+const latestIndex=months.length-1;
+const periodTitle="فروردین تا ۲۴ مهر";
+const monthLabel=i=>i===latestIndex?"مهر تا روز ۲۴":i===5?"شهریور تا روز ۲۹":months[i];
 const ownedSet=new Set(DATA.ownedBrands);
 const colors={"فامیلا":"#d9a541","بلوط":"#6f554d","سانتین":"#4d8b75","کیمبال":"#547f9d","سایر برندها":"#dfe6e1"};
 const passwordHash="00a9343f048bf05f68d6379512d4eade08b21545a8e4bd7f684cd2241a8baa89";
@@ -27,7 +30,7 @@ function renderTabs(){
 }
 function renderKpis(cat,m){
  const company=periodValue(m.companyMonthly),market=periodValue(m.totalMonthly),share=pct(company,market);
- const period=activeMonth==="all"?"فروردین تا ۲۹ شهریور":activeMonth==="5"?"شهریور تا روز ۲۹":months[+activeMonth];
+ const period=activeMonth==="all"?periodTitle:monthLabel(+activeMonth);
  el("kpis").innerHTML=`
  <article class="kpi accent"><span>فروش برندهای شرکت</span><strong>${weight(company)}</strong><small>${period}</small><i class="kpi-icon">↗</i></article>
  <article class="kpi"><span>کل فروش گروه</span><strong>${weight(market)}</strong><small>برندهای شرکت + سایر برندها</small><i class="kpi-icon">Σ</i></article>
@@ -35,28 +38,28 @@ function renderKpis(cat,m){
 }
 function renderTrend(cat,m){
  const max=Math.max(...m.companyMonthly,1);
- const bars=m.companyMonthly.map((v,i)=>`<div class="bar-item"><div class="value-pill"><b>${ton(v)}</b><small>تن</small></div><div class="bar-track"><i style="height:${Math.max(3,v/max*100)}%"></i></div><strong class="month-name">${months[i]}</strong><span class="month-delta ${i===0?'base':change(v,m.companyMonthly[i-1])>=0?'up':'down'}">${i===0?'پایه':`${change(v,m.companyMonthly[i-1])>=0?'▲':'▼'} ${fa(Math.abs(change(v,m.companyMonthly[i-1])),1)}٪`}</span></div>`).join("");
+ const bars=m.companyMonthly.map((v,i)=>`<div class="bar-item" title="${monthLabel(i)}: ${fa(v)} کیلوگرم"><div class="value-pill"><b>${ton(v)}</b><small>تن</small></div><div class="bar-track"><i style="height:${Math.max(3,v/max*100)}%"></i></div><strong class="month-name">${months[i]}</strong><span class="month-delta ${i===0?'base':change(v,m.companyMonthly[i-1])>=0?'up':'down'}">${i===0?'پایه':`${change(v,m.companyMonthly[i-1])>=0?'▲':'▼'} ${fa(Math.abs(change(v,m.companyMonthly[i-1])),1)}٪`}</span></div>`).join("");
  el("trend-panel").innerHTML=panelHead("۰۱","روند فروش برندهای شرکت","مقدار دقیق ماهانه و تغییر نسبت به ماه قبل","تن")+`<div class="trend-chart" aria-label="روند فروش ${cat.name}">${bars}</div>`;
 }
 function categoryRankings(cat){
  const ranked=cat.brands.filter(b=>b.name!=="بدون برند");
- const septemberIndex=months.length-1,septemberTotal=cat.totalMonthly[septemberIndex];
- const septemberTop=[...ranked].map(b=>({name:b.name,value:b.values[septemberIndex],owned:b.owned})).sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name,"fa")).slice(0,3);
+ const latestTotal=cat.totalMonthly[latestIndex];
+ const latestTop=[...ranked].map(b=>({name:b.name,value:b.values[latestIndex],owned:b.owned})).sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name,"fa")).slice(0,3);
  const ytdTop=[...ranked].map(b=>({name:b.name,value:sum(b.values),owned:b.owned})).sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name,"fa")).slice(0,3);
- return {septemberTop,ytdTop,septemberTotal};
+ return {latestTop,ytdTop,latestTotal};
 }
 function rankingCard(title,subtitle,rows,total){
  return `<div class="top-brand-card"><div class="top-brand-head"><span>${title}</span><small>${subtitle}</small></div>${rows.map((row,i)=>`<div class="top-brand-row"><i>${fa(i+1)}</i><span>${row.name}${row.owned?'<em>شرکت</em>':''}</span><b>${fa(row.value)} kg</b><small>${fa(pct(row.value,total),1)}٪</small></div>`).join("")}</div>`;
 }
 function renderShare(cat,m){
  const company=periodValue(m.companyMonthly),market=periodValue(m.totalMonthly),other=market-company,share=pct(company,market);
- el("share-panel").innerHTML=panelHead("۰۲","سهم از فروش گروه",activeMonth==="all"?"تجمعی ۶ ماهه تا ۲۹ شهریور":activeMonth==="5"?"شهریور تا روز ۲۹":months[+activeMonth],"کیلوگرم")+`<div class="share-summary"><div class="donut" style="background:conic-gradient(var(--green) ${share}%,#e5ebe7 0)"><div><strong>${fa(share,1)}٪</strong><span>سهم برندهای شرکت</span></div></div><div class="legend"><div class="legend-row"><i style="background:var(--green)"></i>برندهای شرکت<b>${fa(company)} kg</b></div><div class="legend-row"><i></i>سایر برندها<b>${fa(other)} kg</b></div><div class="legend-row"><i style="background:var(--gold)"></i>کل گروه<b>${fa(market)} kg</b></div></div></div>`;
+ el("share-panel").innerHTML=panelHead("۰۲","سهم از فروش گروه",activeMonth==="all"?"تجمعی ۷ ماهه تا ۲۴ مهر":monthLabel(+activeMonth),"کیلوگرم")+`<div class="share-summary"><div class="donut" style="background:conic-gradient(var(--green) ${share}%,#e5ebe7 0)"><div><strong>${fa(share,1)}٪</strong><span>سهم برندهای شرکت</span></div></div><div class="legend"><div class="legend-row"><i style="background:var(--green)"></i>برندهای شرکت<b>${fa(company)} kg</b></div><div class="legend-row"><i></i>سایر برندها<b>${fa(other)} kg</b></div><div class="legend-row"><i style="background:var(--gold)"></i>کل گروه<b>${fa(market)} kg</b></div></div></div>`;
 }
 function renderCompare(cat,m){
  const ownParts=m.selectedOwned.map(b=>({name:b.name,value:periodValue(b.values),owned:true})).filter(x=>x.value>0);
  const company=periodValue(m.companyMonthly),market=periodValue(m.totalMonthly),parts=[...ownParts,{name:"سایر برندها",value:market-company,owned:false}].sort((a,b)=>b.value-a.value),max=Math.max(...parts.map(x=>x.value),1);
- const {septemberTop,ytdTop,septemberTotal}=categoryRankings(cat);
- el("compare-panel").innerHTML=panelHead("۰۳","ترکیب فروش و رتبه‌بندی برندها","مقایسه برندهای شرکت با سایر بازار و سه برند برتر دوره","کیلوگرم")+`<div class="compare-content"><div class="compare-bars">${parts.map(p=>`<div class="compare-row"><span>${p.name}</span><div class="compare-track"><i style="--color:${colors[p.name]||'#7ba38f'};width:${p.value/max*100}%"></i></div><b>${fa(p.value)}</b><small>${fa(pct(p.value,market),1)}٪</small></div>`).join("")}</div><div class="compare-rankings">${rankingCard("سه برند برتر شهریور","تا روز ۲۹",septemberTop,septemberTotal)}${rankingCard("سه برند برتر ۱۴۰۵","فروردین تا ۲۹ شهریور",ytdTop,cat.marketTotal)}</div></div>`;
+ const {latestTop,ytdTop,latestTotal}=categoryRankings(cat);
+ el("compare-panel").innerHTML=panelHead("۰۳","ترکیب فروش و رتبه‌بندی برندها","مقایسه برندهای شرکت با سایر بازار و سه برند برتر دوره","کیلوگرم")+`<div class="compare-content"><div class="compare-bars">${parts.map(p=>`<div class="compare-row"><span>${p.name}</span><div class="compare-track"><i style="--color:${colors[p.name]||'#7ba38f'};width:${p.value/max*100}%"></i></div><b>${fa(p.value)}</b><small>${fa(pct(p.value,market),1)}٪</small></div>`).join("")}</div><div class="compare-rankings">${rankingCard("سه برند برتر مهر","تا روز ۲۴",latestTop,latestTotal)}${rankingCard("سه برند برتر ۱۴۰۵",periodTitle,ytdTop,cat.marketTotal)}</div></div>`;
 }
 function renderInsights(cat,m){
  const peakSales=Math.max(...m.companyMonthly),peakSalesI=m.companyMonthly.indexOf(peakSales),shares=m.companyMonthly.map((v,i)=>pct(v,m.totalMonthly[i])),peakShare=Math.max(...shares),peakShareI=shares.indexOf(peakShare);
@@ -66,15 +69,15 @@ function renderTable(cat,m){
  const ownRows=m.selectedOwned.map(b=>({name:b.name,owned:true,values:b.values}));
  const other={name:"سایر برندها",owned:false,values:m.otherMonthly};
  const rows=[...ownRows,other];
- const visibleMonths=months.map((name,i)=>({name,i})).filter(x=>activeMonth==="all"||x.i===+activeMonth);
+ const visibleMonths=months.map((_,i)=>({name:monthLabel(i),i})).filter(x=>activeMonth==="all"||x.i===+activeMonth);
  const market=periodValue(m.totalMonthly);
- el("table-panel").innerHTML=panelHead("۰۴","جدول کنترل ماهانه","برندهای شرکت جدا از مجموع سایر برندها","کیلوگرم")+`<div class="table-scroll"><table><thead><tr><th>نوع</th><th>برند / گروه</th>${visibleMonths.map(x=>`<th>${x.name}</th>`).join("")}<th>جمع ۶ ماهه</th><th>سهم انتخاب</th></tr></thead><tbody>${rows.map(r=>{const pv=periodValue(r.values);return `<tr><td><span class="brand-pill ${r.owned?'owned':'other'}">${r.owned?'شرکت':'سایر'}</span></td><td><b>${r.name}</b></td>${visibleMonths.map(x=>`<td>${fa(r.values[x.i])}</td>`).join("")}<td>${fa(sum(r.values))}</td><td><span class="share-pill">${fa(pct(pv,market),1)}٪</span></td></tr>`}).join("")}<tr class="total-row"><td colspan="2">کل گروه ${cat.name}</td>${visibleMonths.map(x=>`<td>${fa(m.totalMonthly[x.i])}</td>`).join("")}<td>${fa(sum(m.totalMonthly))}</td><td>۱۰۰٪</td></tr></tbody></table></div>`;
+ el("table-panel").innerHTML=panelHead("۰۴","جدول کنترل ماهانه","برندهای شرکت جدا از مجموع سایر برندها","کیلوگرم")+`<div class="table-scroll"><table><thead><tr><th>نوع</th><th>برند / گروه</th>${visibleMonths.map(x=>`<th>${x.name}</th>`).join("")}<th>جمع ۷ ماهه</th><th>سهم انتخاب</th></tr></thead><tbody>${rows.map(r=>{const pv=periodValue(r.values);return `<tr><td><span class="brand-pill ${r.owned?'owned':'other'}">${r.owned?'شرکت':'سایر'}</span></td><td><b>${r.name}</b></td>${visibleMonths.map(x=>`<td>${fa(r.values[x.i])}</td>`).join("")}<td>${fa(sum(r.values))}</td><td><span class="share-pill">${fa(pct(pv,market),1)}٪</span></td></tr>`}).join("")}<tr class="total-row"><td colspan="2">کل گروه ${cat.name}</td>${visibleMonths.map(x=>`<td>${fa(m.totalMonthly[x.i])}</td>`).join("")}<td>${fa(sum(m.totalMonthly))}</td><td>۱۰۰٪</td></tr></tbody></table></div>`;
 }
 function render(){
  const cat=DATA.categories[activeCategory],m=metricRows(cat);
  renderTabs();renderKpis(cat,m);renderTrend(cat,m);renderShare(cat,m);renderCompare(cat,m);renderInsights(cat,m);renderTable(cat,m);
  el("hero-total").textContent=ton(sum(DATA.categories.map(c=>c.companyTotal)));
- el("filter-description").textContent=`${activeBrand==="all"?'همه برندهای شرکت':activeBrand} · ${activeMonth==="all"?'۶ ماهه':activeMonth==="5"?'شهریور تا روز ۲۹':months[+activeMonth]}`;
+ el("filter-description").textContent=`${activeBrand==="all"?'همه برندهای شرکت':activeBrand} · ${activeMonth==="all"?'۷ ماهه':monthLabel(+activeMonth)}`;
 }
 
 el("brand-filter").onchange=e=>{activeBrand=e.target.value;render()};
