@@ -1,8 +1,8 @@
 const DATA=window.HYPERFAMILY_DATA;
 const months=DATA.months;
 const latestIndex=months.length-1;
-const periodTitle="فروردین تا ۲۴ مهر";
-const monthLabel=i=>i===latestIndex?"مهر تا روز ۲۴":i===5?"شهریور تا روز ۲۹":months[i];
+const periodTitle="فروردین تا ۲۸ مهر";
+const monthLabel=i=>i===latestIndex?"مهر تا روز ۲۸":i===5?"شهریور":months[i];
 const ownedSet=new Set(DATA.ownedBrands);
 const colors={"فامیلا":"#d9a541","بلوط":"#6f554d","سانتین":"#4d8b75","کیمبال":"#547f9d","سایر برندها":"#dfe6e1"};
 const passwordHash="00a9343f048bf05f68d6379512d4eade08b21545a8e4bd7f684cd2241a8baa89";
@@ -53,13 +53,13 @@ function rankingCard(title,subtitle,rows,total){
 }
 function renderShare(cat,m){
  const company=periodValue(m.companyMonthly),market=periodValue(m.totalMonthly),other=market-company,share=pct(company,market);
- el("share-panel").innerHTML=panelHead("۰۲","سهم از فروش گروه",activeMonth==="all"?"تجمعی ۷ ماهه تا ۲۴ مهر":monthLabel(+activeMonth),"کیلوگرم")+`<div class="share-summary"><div class="donut" style="background:conic-gradient(var(--green) ${share}%,#e5ebe7 0)"><div><strong>${fa(share,1)}٪</strong><span>سهم برندهای شرکت</span></div></div><div class="legend"><div class="legend-row"><i style="background:var(--green)"></i>برندهای شرکت<b>${fa(company)} kg</b></div><div class="legend-row"><i></i>سایر برندها<b>${fa(other)} kg</b></div><div class="legend-row"><i style="background:var(--gold)"></i>کل گروه<b>${fa(market)} kg</b></div></div></div>`;
+ el("share-panel").innerHTML=panelHead("۰۲","سهم از فروش گروه",activeMonth==="all"?"تجمعی ۷ ماهه تا ۲۸ مهر":monthLabel(+activeMonth),"کیلوگرم")+`<div class="share-summary"><div class="donut" style="background:conic-gradient(var(--green) ${share}%,#e5ebe7 0)"><div><strong>${fa(share,1)}٪</strong><span>سهم برندهای شرکت</span></div></div><div class="legend"><div class="legend-row"><i style="background:var(--green)"></i>برندهای شرکت<b>${fa(company)} kg</b></div><div class="legend-row"><i></i>سایر برندها<b>${fa(other)} kg</b></div><div class="legend-row"><i style="background:var(--gold)"></i>کل گروه<b>${fa(market)} kg</b></div></div></div>`;
 }
 function renderCompare(cat,m){
  const ownParts=m.selectedOwned.map(b=>({name:b.name,value:periodValue(b.values),owned:true})).filter(x=>x.value>0);
  const company=periodValue(m.companyMonthly),market=periodValue(m.totalMonthly),parts=[...ownParts,{name:"سایر برندها",value:market-company,owned:false}].sort((a,b)=>b.value-a.value),max=Math.max(...parts.map(x=>x.value),1);
  const {latestTop,ytdTop,latestTotal}=categoryRankings(cat);
- el("compare-panel").innerHTML=panelHead("۰۳","ترکیب فروش و رتبه‌بندی برندها","مقایسه برندهای شرکت با سایر بازار و سه برند برتر دوره","کیلوگرم")+`<div class="compare-content"><div class="compare-bars">${parts.map(p=>`<div class="compare-row"><span>${p.name}</span><div class="compare-track"><i style="--color:${colors[p.name]||'#7ba38f'};width:${p.value/max*100}%"></i></div><b>${fa(p.value)}</b><small>${fa(pct(p.value,market),1)}٪</small></div>`).join("")}</div><div class="compare-rankings">${rankingCard("سه برند برتر مهر","تا روز ۲۴",latestTop,latestTotal)}${rankingCard("سه برند برتر ۱۴۰۵",periodTitle,ytdTop,cat.marketTotal)}</div></div>`;
+ el("compare-panel").innerHTML=panelHead("۰۳","ترکیب فروش و رتبه‌بندی برندها","مقایسه برندهای شرکت با سایر بازار و سه برند برتر دوره","کیلوگرم")+`<div class="compare-content"><div class="compare-bars">${parts.map(p=>`<div class="compare-row"><span>${p.name}</span><div class="compare-track"><i style="--color:${colors[p.name]||'#7ba38f'};width:${p.value/max*100}%"></i></div><b>${fa(p.value)}</b><small>${fa(pct(p.value,market),1)}٪</small></div>`).join("")}</div><div class="compare-rankings">${rankingCard("سه برند برتر مهر","تا روز ۲۸",latestTop,latestTotal)}${rankingCard("سه برند برتر ۱۴۰۵",periodTitle,ytdTop,cat.marketTotal)}</div></div>`;
 }
 function renderInsights(cat,m){
  const peakSales=Math.max(...m.companyMonthly),peakSalesI=m.companyMonthly.indexOf(peakSales),shares=m.companyMonthly.map((v,i)=>pct(v,m.totalMonthly[i])),peakShare=Math.max(...shares),peakShareI=shares.indexOf(peakShare);
